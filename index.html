@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Data</title>
+</head>
+<body>
+    <form id="inputForm" method="post">
+        <label for="nama">Nama:</label>
+        <input type="text" id="nama" name="nama"><br><br>
+        
+        <label for="nim">NIM:</label>
+        <input type="text" id="nim" name="nim"><br><br>
+        
+        <label for="ipk">IPK:</label>
+        <input type="text" id="ipk" name="ipk"><br><br>
+        
+        <button type="button" onclick="submitForm()">Submit</button>
+    </form>
+    <ul id="datas"></ul>
+
+    <script>
+        function submitForm() {
+            // Get form data
+            var form = document.getElementById("inputForm");
+            var formData = new FormData(form);
+
+            // Perform AJAX request to submit form data
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "tambahMhs.php", true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // Reload the page to display updated data
+                    window.location.reload();
+                }
+            };
+            xhr.send(formData);
+        }
+
+        window.onload = function() {
+            // AJAX request to fetch data from PHP script
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var data = JSON.parse(xhr.responseText);
+                    displayData(data);
+                }
+            };
+            xhr.open("GET", "tampilMhs.php", true);
+            xhr.send();
+        };
+
+        function displayData(data) {
+            var dataList = document.getElementById("datas");
+            if (data && data.length > 0) {
+                data.forEach(function(item) {
+                    var listItem = document.createElement("li");
+                    listItem.textContent = item.name;
+                    dataList.appendChild(listItem);
+                });
+            } else {
+                var listItem = document.createElement("li");
+                listItem.textContent = "No records found";
+                dataList.appendChild(listItem);
+            }
+        }
+    </script>
+</body>
+</html>
